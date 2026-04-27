@@ -1,0 +1,957 @@
+﻿<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1440, initial-scale=1">
+<title>Mercury_Self_Service_Index</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@400;500&display=swap');
+
+:root {
+  --navy: #0B0F1A;
+  --navy2: #131828;
+  --navy3: #1C2236;
+  --navy4: #222A3F;
+  --gold: #C49A3C;
+  --gold-light: #E4B84E;
+  --gold-dim: #8B6C27;
+  --gold-bg: rgba(196,154,60,.08);
+  --white: #FFFFFF;
+  --offwh: #EEF0F6;
+  --muted: #8B90A8;
+  --subtle: #555C78;
+  --border: #2A3050;
+  --border2: rgba(255,255,255,.10);
+  --green: #2DBD7E;
+  --green-bg: rgba(45,189,126,.08);
+  --green-border: rgba(45,189,126,.22);
+  --amber: #E8943A;
+  --red: #E05353;
+  --red-bg: rgba(224,83,83,.06);
+  --mercury-red: #D42027;
+  --card: rgba(255,255,255,.03);
+  --r: 12px;
+  --r-sm: 8px;
+  --r-lg: 16px;
+  --shadow: 0 2px 16px rgba(0,0,0,.25);
+  --shadow-sm: 0 1px 6px rgba(0,0,0,.18);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  background: var(--navy);
+  color: var(--offwh);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── LAYOUT ───────────────────────────────── */
+.app { display: flex; min-height: 100vh; }
+.sidebar {
+  width: 260px;
+  background: var(--navy2);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  z-index: 10;
+}
+.main {
+  flex: 1;
+  margin-left: 260px;
+  display: flex;
+  flex-direction: column;
+}
+.topbar {
+  height: 64px;
+  background: var(--navy2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.content {
+  flex: 1;
+  padding: 32px;
+  max-width: 1180px;
+}
+
+/* ── SIDEBAR ──────────────────────────────── */
+.sidebar-logo {
+  padding: 20px 22px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.logo-svg { display: block; }
+.sidebar-plan {
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--border);
+}
+.plan-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--gold-bg);
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  letter-spacing: .03em;
+}
+.plan-badge .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+}
+.sidebar-nav { flex: 1; padding: 12px 10px; overflow-y: auto; }
+.nav-group-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--subtle);
+  padding: 14px 12px 6px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .15s;
+  margin-bottom: 2px;
+}
+.nav-item:hover { background: var(--navy3); color: var(--offwh); }
+.nav-item.active {
+  background: var(--gold-bg);
+  color: var(--gold);
+  border: 1px solid rgba(196,154,60,.15);
+}
+.nav-icon {
+  width: 18px; height: 18px;
+  display: flex; align-items: center; justify-content: center;
+  opacity: .65;
+}
+.nav-item.active .nav-icon { opacity: 1; }
+
+.sidebar-am {
+  padding: 14px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--navy3);
+}
+.am-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.am-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: var(--navy);
+  flex-shrink: 0;
+}
+.am-info { flex: 1; min-width: 0; }
+.am-name { font-size: 13px; font-weight: 600; color: var(--offwh); }
+.am-role { font-size: 11px; color: var(--muted); }
+.am-btn {
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--gold-dim);
+  background: transparent;
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .15s;
+}
+.am-btn:hover { background: var(--gold-bg); }
+
+/* ── TOPBAR ───────────────────────────────── */
+.tb-left { display: flex; align-items: center; gap: 16px; }
+.tb-breadcrumb { font-size: 13px; color: var(--muted); }
+.tb-breadcrumb span { color: var(--offwh); font-weight: 500; }
+.tb-right { display: flex; align-items: center; gap: 14px; }
+.status-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  background: var(--green-bg);
+  color: var(--green);
+  border: 1px solid var(--green-border);
+}
+.pulse-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+.tb-company {
+  font-size: 13px; font-weight: 500; color: var(--offwh);
+  padding: 5px 14px;
+  border-radius: 8px;
+  background: var(--navy3);
+  border: 1px solid var(--border);
+}
+
+/* ── SCREENS ──────────────────────────────── */
+.screen { display: none; animation: fadeIn .25s ease; }
+.screen.active { display: block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── METRICS ──────────────────────────────── */
+.metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+.metric-card {
+  background: var(--navy2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 18px 20px;
+  position: relative;
+  overflow: hidden;
+}
+.metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.metric-card.gold::before { background: var(--gold); }
+.metric-card.green::before { background: var(--green); }
+.metric-card.amber::before { background: var(--amber); }
+.metric-card.muted::before { background: var(--subtle); }
+.mc-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+.mc-val {
+  font-size: 32px;
+  font-weight: 700;
+  font-family: 'DM Mono', monospace;
+  color: var(--offwh);
+  line-height: 1;
+}
+.mc-val .unit { font-size: 14px; font-weight: 400; color: var(--muted); margin-left: 2px; }
+.mc-sub { font-size: 12px; margin-top: 8px; }
+.mc-sub.ok { color: var(--green); }
+.mc-sub.warn { color: var(--amber); }
+.mc-sub.neutral { color: var(--muted); }
+.bar-wrap {
+  height: 6px;
+  background: var(--navy3);
+  border-radius: 3px;
+  margin-top: 12px;
+  overflow: hidden;
+}
+.bar-fill { height: 100%; border-radius: 3px; }
+.bar-fill.green { background: var(--green); }
+.bar-fill.gold { background: var(--gold); }
+.bar-fill.amber { background: var(--amber); }
+
+/* ── DASHBOARD GRID ───────────────────────── */
+.dash-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; margin-bottom: 24px; }
+.dash-card {
+  background: var(--navy2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 0;
+  overflow: hidden;
+}
+.dc-head {
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.dc-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--offwh);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dc-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--green-bg);
+  color: var(--green);
+  border: 1px solid var(--green-border);
+}
+.dc-body { padding: 16px 20px; }
+
+/* ── CHART ────────────────────────────────── */
+.chart-bars { display: flex; align-items: flex-end; gap: 6px; height: 120px; padding-top: 8px; }
+.chart-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+.chart-bar {
+  width: 100%;
+  border-radius: 4px 4px 0 0;
+  transition: height .4s ease;
+}
+.chart-label { font-size: 9px; color: var(--subtle); font-family: 'DM Mono', monospace; }
+.chart-legend { display: flex; gap: 16px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--border); }
+.chart-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--muted); }
+.chart-legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+/* ── EVENT LIST ───────────────────────────── */
+.event-list { display: flex; flex-direction: column; gap: 0; }
+.event-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  font-size: 13px;
+}
+.event-item:last-child { border-bottom: none; }
+.event-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.event-time {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--subtle);
+  min-width: 50px;
+}
+
+/* ── ACTIONS ROW ──────────────────────────── */
+.actions-row { display: flex; gap: 10px; margin-bottom: 28px; }
+
+/* ── BUTTONS ──────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border-radius: var(--r-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .15s;
+  border: none;
+  white-space: nowrap;
+}
+.btn-gold {
+  background: var(--gold);
+  color: var(--navy);
+}
+.btn-gold:hover { background: var(--gold-light); }
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--offwh);
+}
+.btn-outline:hover { border-color: var(--gold-dim); color: var(--gold); }
+.btn-red {
+  background: var(--red-bg);
+  border: 1px solid rgba(224,83,83,.2);
+  color: var(--red);
+}
+.btn-green {
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  color: var(--green);
+}
+
+/* ── TABLES ───────────────────────────────── */
+.data-table { width: 100%; border-collapse: separate; border-spacing: 0; }
+.data-table th {
+  text-align: left;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--subtle);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--navy3);
+}
+.data-table th:first-child { border-radius: var(--r-sm) 0 0 0; }
+.data-table th:last-child { border-radius: 0 var(--r-sm) 0 0; }
+.data-table td {
+  padding: 11px 14px;
+  font-size: 13px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  color: var(--offwh);
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: rgba(255,255,255,.02); }
+.tier-badge {
+  display: inline-flex;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: .03em;
+}
+.tier-pro { background: var(--gold-bg); color: var(--gold); border: 1px solid var(--gold-dim); }
+.tier-start { background: rgba(139,144,168,.1); color: var(--muted); border: 1px solid rgba(139,144,168,.2); }
+.tier-ent { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.status-ok { color: var(--green); font-weight: 500; }
+.status-warn { color: var(--amber); font-weight: 500; }
+.status-off { color: var(--subtle); }
+
+/* ── SUPPORT ──────────────────────────────── */
+.support-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+.support-opt {
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 20px;
+  cursor: pointer;
+  transition: all .18s;
+  background: var(--navy2);
+  text-align: center;
+}
+.support-opt:hover { border-color: var(--border2); background: var(--navy3); }
+.support-opt.sel { border-color: var(--red); background: var(--red-bg); }
+.support-opt.sel-amber { border-color: var(--amber); background: rgba(232,148,58,.06); }
+.support-opt.sel-blue { border-color: #4A9EE8; background: rgba(74,158,232,.06); }
+.so-icon { font-size: 24px; margin-bottom: 8px; }
+.so-label { font-size: 13px; font-weight: 600; color: var(--offwh); }
+.so-desc { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+.field { margin-bottom: 16px; }
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.field input, .field select, .field textarea {
+  width: 100%;
+  background: var(--navy3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 10px 14px;
+  color: var(--offwh);
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  transition: border-color .15s;
+}
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--gold-dim); }
+.field textarea { resize: none; min-height: 80px; }
+
+.sla-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--r-sm);
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+/* ── PLANS ────────────────────────────────── */
+.plans-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.plan-card {
+  background: var(--navy2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 24px;
+  position: relative;
+  transition: border-color .15s;
+}
+.plan-card:hover { border-color: var(--border2); }
+.plan-card.rec { border-color: var(--gold-dim); }
+.plan-card.rec::before {
+  content: 'PLANO ACTUAL';
+  position: absolute;
+  top: -11px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 9px;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 10px;
+  letter-spacing: .06em;
+}
+.pc-name { font-size: 15px; font-weight: 700; color: var(--offwh); margin-bottom: 2px; }
+.pc-speed { font-size: 11px; color: var(--muted); margin-bottom: 16px; }
+.pc-price {
+  font-size: 28px; font-weight: 700;
+  font-family: 'DM Mono', monospace;
+  color: var(--offwh);
+  margin-bottom: 2px;
+}
+.pc-price .u { font-size: 13px; font-weight: 400; color: var(--muted); }
+.pc-divider { height: 1px; background: var(--border); margin: 16px 0; }
+.pc-feat { display: flex; align-items: center; gap: 8px; font-size: 12px; padding: 4px 0; }
+.pc-feat.ok { color: var(--green); }
+.pc-feat.no { color: var(--subtle); }
+.pc-btn {
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px;
+  border-radius: var(--r-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  transition: all .15s;
+  text-align: center;
+}
+.pc-btn.current {
+  background: var(--gold-bg);
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+}
+.pc-btn.upgrade {
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  color: var(--navy);
+}
+.pc-btn.upgrade:hover { background: var(--gold-light); }
+.pc-btn.downgrade {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--subtle);
+}
+
+/* ── CONFIRM ──────────────────────────────── */
+.ticket-confirm {
+  background: var(--navy2);
+  border: 1px solid var(--green);
+  border-radius: var(--r);
+  padding: 28px;
+  text-align: center;
+  display: none;
+}
+.tc-icon { font-size: 40px; margin-bottom: 10px; }
+.tc-title { font-size: 18px; font-weight: 700; color: var(--green); margin-bottom: 6px; }
+.tc-desc { font-size: 13px; color: var(--muted); }
+.tc-id { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--subtle); margin-top: 10px; }
+
+/* ── UPGRADE NOTE ─────────────────────────── */
+.upgrade-note {
+  margin-top: 20px;
+  background: var(--navy3);
+  border: 1px solid var(--gold-dim);
+  border-radius: var(--r);
+  padding: 16px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.un-icon { font-size: 20px; flex-shrink: 0; }
+body,td,th {
+    font-family: "DM Sans", -apple-system, sans-serif;
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ═══ SIDEBAR ═══════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <!-- Mercury 5G Logo as SVG -->
+    <svg class="logo-svg" width="180" height="48" viewBox="0 0 340 88" xmlns="http://www.w3.org/2000/svg">
+      <text x="0" y="58" font-family="'DM Sans',Arial,sans-serif" font-weight="700" font-size="62" fill="#FFFFFF" letter-spacing="-2">mercury</text>
+      <text x="270" y="58" font-family="'DM Sans',Arial,sans-serif" font-weight="700" font-size="62" fill="#D42027" letter-spacing="-1">5<tspan font-size="50" dy="-6">G</tspan></text>
+      <text x="2" y="80" font-family="'DM Sans',Arial,sans-serif" font-weight="400" font-size="16" fill="#8B90A8" letter-spacing="0.5">Powered by MSTelcom</text>
+    </svg>
+  </div>
+
+  <div class="sidebar-plan">
+    <div class="plan-badge"><span class="dot"></span> 5G Business Pro · Activo</div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-group-label">Principal</div>
+    <div class="nav-item active" onclick="goTo(0)">
+      <span class="nav-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg></span>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="goTo(0)">
+      <span class="nav-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12V4h12v8H2z"/><path d="M5 7h6M5 9.5h4"/></svg></span>
+      Relatórios de Uptime
+    </div>
+
+    <div class="nav-group-label">Servicos</div>
+    <div class="nav-item" onclick="goTo(1)">
+      <span class="nav-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg></span>
+      Sites &amp; CPEs
+    </div>
+    <div class="nav-item" onclick="goTo(3)">
+      <span class="nav-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h12M8 2v12M4 4l8 8M12 4L4 12"/></svg></span>
+      Planos &amp; Upgrade
+    </div>
+    <div class="nav-item" onclick="goTo(0)">
+      <span class="nav-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="4" width="12" height="8" rx="1.5"/><path d="M2 7h12"/></svg></span>
+      Facturacao
+    </div>
+
+    <div class="nav-group-label">Suporte</div>
+    <div class="nav-item" onclick="goTo(2)">
+      <span class="nav-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/><path d="M8 11v.01M8 5a2 2 0 0 1 1.5 3.5L8 10"/></svg></span>
+      Abrir Incidente
+    </div>
+    <div class="nav-item" onclick="goTo(0)">
+      <span class="nav-icon"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 3h12v10H2zM2 6h12"/></svg></span>
+      Histórico de Tickets
+    </div>
+  </nav>
+
+  <div class="sidebar-am">
+    <div class="am-card">
+      <div class="am-avatar">JM</div>
+      <div class="am-info">
+        <div class="am-name">Rui Santos</div>
+        <div>Gestor de conta · Online</div>
+      </div>
+      <button class="am-btn">Chat</button>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN AREA ═════════════════════════════════════════ -->
+<div class="main">
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="tb-left">
+      <div class="tb-breadcrumb">Portal Business › <span id="tbTitle">Dashboard</span></div>
+    </div>
+    <div class="tb-right">
+      <span class="status-live"><span class="pulse-dot"></span>Rede operacional</span>
+      <span class="tb-company">BFA Agência Cabinda</span>
+    </div>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- ═══ SCREEN 0: DASHBOARD ═══════════════════════════ -->
+    <div class="screen active" id="s0">
+      <div class="metrics">
+        <div class="metric-card gold">
+          <div class="mc-label">Uptime este mes</div>
+          <div class="mc-val">99.7<span class="unit">%</span></div>
+          <div class="mc-sub ok">SLA garantido 99,5% ✓</div>
+          <div class="bar-wrap"><div class="bar-fill green" style="width:99.7%"></div></div>
+        </div>
+        <div class="metric-card green">
+          <div class="mc-label">Velocidade actual</div>
+          <div class="mc-val">287<span class="unit">Mbps</span></div>
+          <div class="mc-sub ok">↑ Download em tempo real</div>
+          <div class="bar-wrap"><div class="bar-fill green" style="width:95.7%"></div></div>
+        </div>
+        <div class="metric-card amber">
+          <div class="mc-label">Incidentes este mes</div>
+          <div class="mc-val">1</div>
+          <div class="mc-sub">15 Abr · Degradacao parcial · Resolvido</div>
+        </div>
+        <div class="metric-card muted">
+          <div class="mc-label">Proximo QBR</div>
+          <div class="mc-val" style="font-size:22px;padding-top:4px;">12 Jun</div>
+          <div class="mc-sub neutral">Rui Santos · 10h00 · VIP Lounge</div>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="dash-card">
+          <div class="dc-head">
+            <div class="dc-title">
+              <svg width="16" height="16" fill="none" stroke="#C49A3C" stroke-width="1.5"><polyline points="2,12 5,8 8,10 11,5 14,2"/></svg>
+              Uptime ultimos 30 dias
+            </div>
+            <span class="dc-badge">SLA 99,5% ✓</span>
+          </div>
+          <div class="dc-body">
+            <div class="chart-bars">
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">24M</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">25M</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:99%;background:var(--green)"></div><div class="chart-label">26M</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">27M</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">28M</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:98%;background:var(--green)"></div><div class="chart-label">29M</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">30M</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">31M</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">01A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">02A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:99%;background:var(--green)"></div><div class="chart-label">03A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">04A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">05A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">06A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">07A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">08A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">09A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">10A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">11A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">12A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">13A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">14A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:80%;background:var(--amber)"></div><div class="chart-label">15A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">16A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">17A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">18A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">19A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">20A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">21A</div></div>
+              <div class="chart-bar-wrap"><div class="chart-bar" style="height:100%;background:var(--green)"></div><div class="chart-label">22A</div></div>
+            </div>
+            <div class="chart-legend">
+              <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--green)"></div> Operacional (100%)</div>
+              <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--amber)"></div>
+                 Degradação parcial</div>
+              <div class="chart-legend-item"><div class="chart-legend-dot" style="background:var(--red)"></div>
+                 Interrupção</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dash-card">
+          <div class="dc-head">
+            <div class="dc-title">
+              <svg width="16" height="16" fill="none" stroke="#C49A3C" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>
+              Actividade recente
+            </div>
+          </div>
+          <div class="dc-body">
+            <div class="event-list">
+              <div class="event-item"><span class="event-dot" style="background:var(--green)"></span><span class="event-time">Hoje</span><span>Rede estável — 0 incidentes</span></div>
+              <div class="event-item"><span class="event-dot" style="background:#4A9EE8"></span><span class="event-time">19 Abr</span><span>Relatório uptime enviado</span></div>
+              <div class="event-item"><span class="event-dot" style="background:var(--amber)"></span><span class="event-time">15 Abr</span><span>Degradação 14h–15h30 · resolvido</span></div>
+              <div class="event-item"><span class="event-dot" style="background:var(--green)"></span><span class="event-time">01 Abr</span><span>Renovação automática processada</span></div>
+              <div class="event-item"><span class="event-dot" style="background:#4A9EE8"></span><span class="event-time">28 Mar</span><span>QBR trimestral realizado</span></div>
+              <div class="event-item"><span class="event-dot" style="background:var(--green)"></span><span class="event-time">15 Mar</span><span>Upgrade firmware CPE aplicado</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions-row">
+        <button class="btn btn-gold" onclick="goTo(2)">+ Abrir incidente</button>
+        <button class="btn btn-outline" onclick="goTo(3)">↑ Ver planos superiores</button>
+        <button class="btn btn-outline">↓ Descarregar relatorio Abril</button>
+        <button class="btn btn-outline" onclick="goTo(1)">⚡ Ver sites activos</button>
+      </div>
+    </div>
+
+    <!-- ═══ SCREEN 1: SITES ═══════════════════════════════ -->
+    <div class="screen" id="s1">
+      <div class="metrics" style="grid-template-columns:repeat(3,1fr);">
+        <div class="metric-card green">
+          <div class="mc-label">Sites activos</div>
+          <div class="mc-val">3</div>
+          <div class="mc-sub ok">Todos operacionais</div>
+        </div>
+        <div class="metric-card gold">
+          <div class="mc-label">CPEs instalados</div>
+          <div class="mc-val">3</div>
+          <div class="mc-sub neutral">Firmware: v2.4.1 (actual)</div>
+        </div>
+        <div class="metric-card muted">
+          <div class="mc-label">Proxima activacao</div>
+          <div class="mc-val" style="font-size:20px;padding-top:4px;">Pendente</div>
+          <div class="mc-sub neutral">Nenhum site em fila</div>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <div class="dc-head">
+          <div class="dc-title">Sites &amp; CPEs activos</div>
+          <button class="btn btn-gold" style="padding:6px 14px;font-size:12px;">+ Solicitar novo site</button>
+        </div>
+        <div class="dc-body" style="padding:0;">
+          <table class="data-table">
+            <thead>
+              <tr><th>Local</th><th>CPE ID</th><th>APN</th><th>Velocidade</th><th>Uptime</th><th>SLA</th><th>Estado</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Agencia Deolinda Rodrigues</strong><br><span style="font-size:11px;color:var(--muted)">R. Deolinda Rodrigues, Cabinda</span></td>
+                <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)">CPE-CBN-001</td>
+                <td><span class="tier-badge tier-pro">APN Privada</span></td>
+                <td>287 Mbps</td>
+                <td style="color:var(--green)">99.7%</td>
+                <td><span class="tier-badge tier-pro">Pro 99,5%</span></td>
+                <td><span class="status-ok">● Operacional</span></td>
+              </tr>
+              <tr>
+                <td><strong>Agencia Futila</strong><br><span style="font-size:11px;color:var(--muted)">Estrada Futila, Cabinda</span></td>
+                <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)">CPE-CBN-002</td>
+                <td><span class="tier-badge tier-pro">APN Privada</span></td>
+                <td>265 Mbps</td>
+                <td style="color:var(--green)">99.9%</td>
+                <td><span class="tier-badge tier-pro">Pro 99,5%</span></td>
+                <td><span class="status-ok">● Operacional</span></td>
+              </tr>
+              <tr>
+                <td><strong>ATM Aeroporto</strong><br><span style="font-size:11px;color:var(--muted)">Aeroporto de Cabinda</span></td>
+                <td style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted)">CPE-CBN-003</td>
+                <td><span class="tier-badge tier-start">APN Partilhada</span></td>
+                <td>94 Mbps</td>
+                <td style="color:var(--green)">99.4%</td>
+                <td><span class="tier-badge tier-start">Start BE</span></td>
+                <td><span class="status-ok">● Operacional</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SCREEN 2: INCIDENTE ═══════════════════════════ -->
+    <div class="screen" id="s2">
+      <div class="sla-info">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/><path d="M8 5v3l2 2"/></svg>
+        SLA Pro activo · resposta garantida &lt;8h · escalamento automatico ao gestor de conta
+      </div>
+
+      <div class="support-grid">
+        <div class="support-opt sel" id="p1" onclick="selP('p1')">
+          <div class="so-icon">🔴</div>
+          <div class="so-label">Critico</div>
+          <div class="so-desc">Rede em baixo · operacao parada</div>
+        </div>
+        <div class="support-opt" id="p2" onclick="selP('p2')">
+          <div class="so-icon">🟡</div>
+          <div class="so-label">Moderado</div>
+          <div class="so-desc">Degradacao · ATM lento</div>
+        </div>
+        <div class="support-opt" id="p3" onclick="selP('p3')">
+          <div class="so-icon">🔵</div>
+          <div class="so-label">Baixo</div>
+          <div class="so-desc">Questao ou duvida</div>
+        </div>
+      </div>
+
+      <div id="ticketForm">
+        <div class="field">
+          <label>Local afectado</label>
+          <select>
+            <option>Agencia Cabinda – R. Deolinda Rodrigues</option>
+            <option>Agencia Futila</option>
+            <option>ATM Aeroporto</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Descricao do problema</label>
+          <textarea placeholder="ex. ATM da agencia sem resposta desde as 09h15. Sistema CBS inacessivel. 3 colaboradores afectados."></textarea>
+        </div>
+        <button class="btn btn-gold" onclick="submitTicket()" style="margin-top:4px;">Submeter incidente</button>
+      </div>
+
+      <div class="ticket-confirm" id="ticketOk">
+        <div class="tc-icon">✓</div>
+        <div class="tc-title">Incidente registado</div>
+        <div class="tc-desc">Joao Mateus foi notificado. Resposta garantida em <strong style="color:var(--offwh)">menos de 8 horas</strong>.</div>
+        <div class="tc-id">Referencia: INC-2026-0847 · Criado as 11:32</div>
+        <button class="btn btn-outline" style="margin-top:16px;" onclick="goTo(0)">← Voltar ao dashboard</button>
+      </div>
+    </div>
+
+    <!-- ═══ SCREEN 3: PLANOS ═════════════════════════════ -->
+    <div class="screen" id="s3">
+      <div class="plans-grid">
+        <div class="plan-card">
+          <div class="pc-name">5G Office Start</div>
+          <div class="pc-speed">Ate 100 Mbps · Best effort</div>
+          <div class="pc-price">$300<span class="u"> /mes</span></div>
+          <div class="pc-divider"></div>
+          <div class="pc-feat ok">✓ APN partilhada</div>
+          <div class="pc-feat ok">✓ Portal self-service</div>
+          <div class="pc-feat ok">✓ Ticket &lt;48h</div>
+          <div class="pc-feat no">– Gestor dedicado</div>
+          <div class="pc-feat no">– Failover 4G</div>
+          <div class="pc-feat no">– QBR trimestral</div>
+          <div class="pc-btn downgrade">Plano inferior</div>
+        </div>
+
+        <div class="plan-card rec">
+          <div class="pc-name">5G Business Pro</div>
+          <div class="pc-speed">Ate 300 Mbps · Uptime 99,5%</div>
+          <div class="pc-price">$750<span class="u"> /mes</span></div>
+          <div class="pc-divider"></div>
+          <div class="pc-feat ok">✓ APN privada</div>
+          <div class="pc-feat ok">✓ Failover 4G automatico</div>
+          <div class="pc-feat ok">✓ Resposta &lt;8h</div>
+          <div class="pc-feat ok">✓ Gestor de conta</div>
+          <div class="pc-feat ok">✓ Painel de uptime</div>
+          <div class="pc-feat no">– SD-WAN / VPN</div>
+          <div class="pc-btn current">Plano activo ✓</div>
+        </div>
+
+        <div class="plan-card">
+          <div class="pc-name">5G Enterprise Managed</div>
+          <div class="pc-speed">500 Mbps dedicado · Uptime 99,9%</div>
+          <div class="pc-price">$1.500<span class="u">+ /mes</span></div>
+          <div class="pc-divider"></div>
+          <div class="pc-feat ok">✓ SD-WAN + VPN dedicada</div>
+          <div class="pc-feat ok">✓ Resposta &lt;4h on-site 24/7</div>
+          <div class="pc-feat ok">✓ Backup dedicado</div>
+          <div class="pc-feat ok">✓ QBR com Dir. IT</div>
+          <div class="pc-feat ok">✓ SLA com penalidade</div>
+          <div class="pc-feat ok">✓ Dossier sectorial</div>
+          <div class="pc-btn upgrade" onclick="alert('Pedido enviado a Joao Mateus. Resposta em menos de 4 horas.')">Solicitar proposta →</div>
+        </div>
+      </div>
+
+      <div class="upgrade-note">
+        <span class="un-icon">💬</span>
+        <div>O upgrade para Enterprise e gerido pelo seu Account Manager Joao Mateus — inclui avaliacao do site, configuracao SD-WAN e proposta personalizada. Nenhum custo de instalacao durante Maio 2026.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<script>
+const titles = ['Dashboard', 'Sites & CPEs', 'Abrir Incidente', 'Planos & Upgrade'];
+function goTo(i) {
+  document.querySelectorAll('.screen').forEach((s,idx) => s.classList.toggle('active', idx===i));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navMap = [0, 3, 7, 4];
+  document.querySelectorAll('.nav-item')[navMap[i]]?.classList.add('active');
+  document.getElementById('tbTitle').textContent = titles[i];
+  // reset ticket
+  if(i===2) { document.getElementById('ticketForm').style.display='block'; document.getElementById('ticketOk').style.display='none'; }
+}
+function selP(id) {
+  document.querySelectorAll('.support-opt').forEach(o => o.classList.remove('sel','sel-amber','sel-blue'));
+  const map = {p1:'sel',p2:'sel-amber',p3:'sel-blue'};
+  document.getElementById(id).classList.add(map[id]);
+}
+function submitTicket() {
+  document.getElementById('ticketForm').style.display='none';
+  document.getElementById('ticketOk').style.display='block';
+}
+</script>
+</body>
+</html>
